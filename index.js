@@ -1,34 +1,26 @@
 const express = require("express");
 const app = express();
-const mongo = require("mongoose");
-const SERVER_PORT = 4000;
-require('dotenv/config')
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+require("dotenv/config");
+const postsCtrl = require("./Controllers/posts");
+const { CONNECTION_STRING, SERVER_PORT, SESSION_SECRET } = process.env;
 
 app.listen(SERVER_PORT, console.log(`RUNNING @ PORT ${SERVER_PORT}`));
 
 //CONNECT TO DB
-mongo.connect(
-  "mongodb+srv://AC:<alc123>@ac-cluster.zqmaf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-  { useNewUrlParser: true },
-  () => {
-    console.log("CONNECTED TO DB");
-  }
-);
+mongoose.connect(CONNECTION_STRING, { useNewUrlParser: true }, () => {});
 
-//MiddleWare
-app.use("/posts", () => {
-  console.log("middleware for posts running");
+mongoose.connection.on("connected", () => {
+  console.log("CONNECTED TO DB");
 });
 
-//ROUTES
+//HOME ROUTE
 app.get("/", (req, res) => {
   res.send("HOME PAGE, HERE WE GO!!");
+  console.log(Date.now);
 });
 
-app.get("/POsts", (req, res) => {
-  res.send("POSTS, AH YEH!");
-});
-
-// app.delete('/', (req,res)=>{
-//     res.send('HOME PAGE, HERE WE GO!!')
-// })
+//MiddleWare
+app.use(bodyParser.json());
+app.use("/posts", postsCtrl);
