@@ -9,7 +9,7 @@ const PostSchema = mongoose.Schema({
         type:String,
         required:true
         },
-    author:{
+    date:{
         type:Date,
         default:Date.now
         }
